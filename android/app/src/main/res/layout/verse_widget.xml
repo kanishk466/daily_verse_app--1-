@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#1F1A24"
+    android:id="@+id/widget_container">
+
+    <TextView
+        android:id="@+id/widget_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🕉️ Gita Shlok Daily"
+        android:textColor="#FF9800"
+        android:textStyle="bold"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/widget_original"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:maxLines="3" />
+
+    <TextView
+        android:id="@+id/widget_hindi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="तेरा अधिकार केवल कर्म करने में है, फल में नहीं।"
+        android:textColor="#CCCCCC"
+        android:textSize="11sp"
+        android:maxLines="2" />
+
+    <TextView
+        android:id="@+id/widget_source"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="— Bhagavad Gita 2.47"
+        android:textColor="#FF9800"
+        android:textSize="10sp" />
+
+</LinearLayout>

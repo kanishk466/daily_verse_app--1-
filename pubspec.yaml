@@ -1,0 +1,28 @@
+name: daily_verse_app
+description: Daily Religious Verses
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  google_fonts: ^6.1.0
+  share_plus: ^9.0.0
+  shared_preferences: ^2.2.2
+  home_widget: ^0.6.0
+  flutter_local_notifications: ^17.1.2   # ← NEW: Notifications
+  timezone: ^0.9.4                        # ← NEW: Daily 7 AM Scheduling
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/database/hindu.json
