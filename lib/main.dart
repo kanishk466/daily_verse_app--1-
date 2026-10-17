@@ -52,7 +52,16 @@ Color get primaryColor {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await NotificationService.init(currentReligion);
+  
+  // Safe notification initialization - App load hone me kabhi hang nahi hogi
+  try {
+    if (!kIsWeb) {
+      await NotificationService.init(currentReligion);
+    }
+  } catch (e) {
+    debugPrint("Notification init error: $e");
+  }
+
   runApp(const DailyVerseApp());
 }
 
@@ -90,6 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectedCategory = 'all';
   int streak = 1;
   List<int> favorites = [];
+  String? errorMessage;
 
   // Notification Preferences
   bool notifEnabled = true;
@@ -103,22 +113,33 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _boot() async {
-    await _repo.initialize(currentReligion);
+    try {
+      await _repo.initialize(currentReligion);
 
-    final prefs = await SharedPreferences.getInstance();
-    streak = prefs.getInt('streak') ?? 1;
-    favorites = prefs.getStringList('favorites')?.map(int.parse).toList() ?? [];
+      final prefs = await SharedPreferences.getInstance();
+      streak = prefs.getInt('streak') ?? 1;
+      favorites = prefs.getStringList('favorites')?.map(int.parse).toList() ?? [];
 
-    notifEnabled = prefs.getBool('notif_enabled') ?? true;
-    notifHour = prefs.getInt('notif_hour') ?? 7;
-    notifMinute = prefs.getInt('notif_minute') ?? 0;
+      notifEnabled = prefs.getBool('notif_enabled') ?? true;
+      notifHour = prefs.getInt('notif_hour') ?? 7;
+      notifMinute = prefs.getInt('notif_minute') ?? 0;
 
-    setState(() {
-      currentVerse = _repo.next(category: selectedCategory);
-      loading = false;
-    });
+      final initialVerse = _repo.next(category: selectedCategory);
 
-    if (currentVerse != null) _pushToWidget(currentVerse!);
+      setState(() {
+        currentVerse = initialVerse;
+        loading = false;
+        errorMessage = null;
+      });
+
+      if (initialVerse != null) _pushToWidget(initialVerse);
+    } catch (e) {
+      debugPrint("Error initializing repository: $e");
+      setState(() {
+        loading = false;
+        errorMessage = e.toString();
+      });
+    }
   }
 
   void _onNew() {
@@ -223,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF161B22),
-      shape: const RoundedRectangleBorder(
+      shape: const RoundedRoundedBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (ctx) {
@@ -300,6 +321,43 @@ class _HomeScreenState extends State<HomeScreen> {
     if (loading) {
       return Scaffold(
         body: Center(child: CircularProgressIndicator(color: primaryColor)),
+      );
+    }
+
+    // Error Fallback Screen
+    if (errorMessage != null || currentVerse == null) {
+      return Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.warning_amber_rounded, size: 60, color: Colors.amber),
+                const SizedBox(height: 16),
+                Text(
+                  'Unable to load data',
+                  style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  errorMessage ?? 'No verses found in offline database.',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.grey, fontSize: 13),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+                  onPressed: () {
+                    setState(() => loading = true);
+                    _boot();
+                  },
+                  child: const Text('Retry', style: TextStyle(color: Colors.black)),
+                )
+              ],
+            ),
+          ),
+        ),
       );
     }
 
