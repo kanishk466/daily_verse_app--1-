@@ -244,9 +244,9 @@ class _HomeScreenState extends State<HomeScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF161B22),
-      shape: const RoundedRoundedBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+     shape: const RoundedRectangleBorder(
+  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+),
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setModalState) {
